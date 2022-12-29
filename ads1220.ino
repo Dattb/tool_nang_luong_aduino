@@ -32,8 +32,9 @@
 #define WAKEUP_LED        8
 #define OVER_LOAD_LED     9
 
-#define SLEEP_CURRENT     7       //7uA
-#define WAKEUP_CURRENT     14000  //uA
+#define SLEEP_CURRENT          5       //uA
+#define SLEEP_OVER_CURRENT     500     //uA
+#define WAKEUP_CURRENT         14000   //uA
 
 /* Create your ADS1220 object */
 ADS1220_WE ads = ADS1220_WE(ADS1220_CS_PIN, ADS1220_DRDY_PIN);
@@ -54,6 +55,11 @@ void currentCheck(double current){
     digitalWrite(LOW_POWER_LED,1);
     digitalWrite(WAKEUP_LED,0);
     digitalWrite(OVER_LOAD_LED,0);
+  }
+  else if(current <= SLEEP_OVER_CURRENT){
+    digitalWrite(LOW_POWER_LED,0);
+    digitalWrite(WAKEUP_LED,0);
+    digitalWrite(OVER_LOAD_LED,1);
   }
   else if(current <= WAKEUP_CURRENT){
     digitalWrite(LOW_POWER_LED,0);
@@ -100,7 +106,7 @@ void loop(){
   long longResult = 0;
   double data = 0;
   for(unsigned char i=0;i<20;i++){
-    delay(8);
+    delay(10);
     longResult = longResult + ads.getRawData();
   }
 
